@@ -1,0 +1,5 @@
+logging.level:
+  root: info
+  '[info.myone]': debug
+  '[org.hibernate.SQL]': debug
+  '[org.hibernate.type]': trace
