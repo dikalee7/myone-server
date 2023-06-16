@@ -72,6 +72,7 @@ public class SecurityConfig {
 		 */
         http.formLogin(login -> login
         		.loginPage("/login")
+        		.usernameParameter("userid")
         		.loginProcessingUrl("/login_proc")
                 .defaultSuccessUrl("/")
                 .permitAll());

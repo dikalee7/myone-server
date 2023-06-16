@@ -21,10 +21,10 @@ public class CustomUserDetailsService implements UserDetailsService {
     private UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String userid) throws UsernameNotFoundException {
 
     	// 계정 정보 조회
-        Account account = userRepository.findByUsername(username);
+        Account account = userRepository.findByUserid(userid);
 
         if(account == null){
             throw new UsernameNotFoundException("UsernameNotFoundException");
