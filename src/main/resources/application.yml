@@ -1,22 +1,11 @@
 server:
   port: '9080'
-logging.level:
-  root: info
-  '[info.myone]': debug
-  '[org.hibernate.SQL]': debug
-  '[org.hibernate.type]': trace
 spring:
-  thymeleaf:
-    prefix: classpath:/templates/
-    suffix: .html
-  mvc:
-    pathmatch:
-      matching-strategy: ant-path-matcher
   devtools:
     restart:
-      enabled: 'true'
+      enabled: true
     livereload:
-      enabled: 'true'
+      enabled: true
   datasource:
     url: jdbc:postgresql://localhost:5432/myone
     username: dikalee
@@ -27,10 +16,25 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
       hibernate:
-#        show_sql: true
-        "[format_sql]": true
+        '[show_sql]': true
+        '[format_sql]': true
+        jdbc:
+          lob:
+            '[non_contextual_creation]': true
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    cache: false
+  main:
+    allow-bean-definition-overriding: true
   output:
     ansi:
       enabled: always
+logging.level:
+  root: info
+  '[info.myone]': debug
+  '[org.hibernate.SQL]': debug
+  '[org.hibernate.type]': trace
