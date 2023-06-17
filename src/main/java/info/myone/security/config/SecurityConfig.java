@@ -11,12 +11,15 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import info.myone.security.common.FormAuthenticationDetailsSource;
 import info.myone.security.provider.CustomAuthenticationProvider;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
-
+	
 	/*
 	 * 인증 API – Login Form 인증 과정 UsernamePasswordAuthenticationFilter
 	 * AntPathRequestMatcher(/login) Authentication(Username + Password)
@@ -24,16 +27,20 @@ public class SecurityConfig {
 	 * Authentication(User+ Authorities) SecurityContext에 저장 SuccessHandler
 	 * 
 	 * !! DB 인증 구현 시 실제 인증 처리하는 AuthenticationProvider 구현 객체를 생성하여 적용
+	 * !! 인증시 사용자 추가 파라미터 사용이 필요하다면 AuthenticationDetailsSource 구현 객체를 생성하여 적용
 	 */
+	
+	private final FormAuthenticationDetailsSource authenticationDetailsSource;
 
 	/*
-	 * DB 인증 AuthenticationProvider 구현 객체
+	 * DB를 이용한 로그인을 위하여 인증 AuthenticationProvider 구현 객체
 	 */
 	@Bean
 	AuthenticationProvider authenticationProvider() {
 		return new CustomAuthenticationProvider();
 	}
-
+	
+	
 	// @formatter:off
 	/*
 	 * 인증 API
@@ -74,6 +81,7 @@ public class SecurityConfig {
         		.loginPage("/login")
         		.usernameParameter("userid")
         		.loginProcessingUrl("/login_proc")
+        		.authenticationDetailsSource(authenticationDetailsSource)
                 .defaultSuccessUrl("/")
                 .permitAll());
         

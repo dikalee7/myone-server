@@ -1,0 +1,19 @@
+package info.myone.security.common;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
+
+import lombok.Getter;
+
+@SuppressWarnings("serial")
+@Getter
+public class FormWebAuthenticationDetails extends WebAuthenticationDetails {
+	
+	private String secretKey;
+
+	public FormWebAuthenticationDetails(HttpServletRequest request) {
+		super(request);
+		secretKey = request.getParameter("secret_key");
+	}
+}
