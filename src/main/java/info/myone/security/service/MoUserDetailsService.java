@@ -15,7 +15,7 @@ import info.myone.member.domain.entity.Account;
 import info.myone.member.repository.UserRepository;
 
 @Service("userDetailsService")
-public class CustomUserDetailsService implements UserDetailsService {
+public class MoUserDetailsService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;

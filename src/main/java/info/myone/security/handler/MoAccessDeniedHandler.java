@@ -12,7 +12,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import lombok.Setter;
 
 @Setter
-public class CustomAccessDeniedHandler implements AccessDeniedHandler {
+public class MoAccessDeniedHandler implements AccessDeniedHandler {
 
     private String errorPage;
 

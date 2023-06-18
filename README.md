@@ -18,16 +18,16 @@
 
 > 커스터마이징
  - DB 인증 구현 시 실제 인증 처리하는 AuthenticationProvider 구현 객체를 생성하여 적용  
- `CustomAuthenticationProvider`  
+ `MoAuthenticationProvider`  
  - 사용자 추가 파라미터 사용이 필요하다면 AuthenticationDetailsSource 구현 객체를 생성하여 적용  
- `FormAuthenticationDetailsSource`  
- `FormWebAuthenticationDetails`  
+ `MoAuthenticationDetailsSource`  
+ `MoWebAuthenticationDetails`  
  - 인증 성공 Handler  
- `CustomAuthenticationSuccessHandler`  
+ `MoAuthenticationSuccessHandler`  
  - 인증 실 Handler  
- `CustomAuthenticationFailureHandler`  
+ `MoAuthenticationFailureHandler`  
  - 접근 권한 처리 Handler  
- `CustomAccessDeniedHandler`
+ `MoAccessDeniedHandler`
 
 
 >  Security Ajax 인증 과정  

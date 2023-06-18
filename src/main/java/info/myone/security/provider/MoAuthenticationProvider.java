@@ -15,7 +15,7 @@ import info.myone.security.common.FormWebAuthenticationDetails;
 import info.myone.security.service.AccountContext;
 
 @Component("authenticationProvider")
-public class CustomAuthenticationProvider implements AuthenticationProvider {
+public class MoAuthenticationProvider implements AuthenticationProvider {
 
 	@Autowired
 	private UserDetailsService userDetailsService;

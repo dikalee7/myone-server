@@ -3,6 +3,7 @@ package info.myone.security.config;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -13,15 +14,16 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
 import info.myone.security.common.FormAuthenticationDetailsSource;
-import info.myone.security.handler.CustomAccessDeniedHandler;
-import info.myone.security.handler.CustomAuthenticationFailureHandler;
-import info.myone.security.handler.CustomAuthenticationSuccessHandler;
-import info.myone.security.provider.CustomAuthenticationProvider;
+import info.myone.security.handler.MoAccessDeniedHandler;
+import info.myone.security.handler.MoAuthenticationFailureHandler;
+import info.myone.security.handler.MoAuthenticationSuccessHandler;
+import info.myone.security.provider.MoAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@Order(1)
 public class SecurityConfig {
 	
 	/*
@@ -42,16 +44,16 @@ public class SecurityConfig {
 	private final FormAuthenticationDetailsSource formAuthenticationDetailsSource;
 	
 	// AuthenticationSuccessHandler 구현체
-	private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+	private final MoAuthenticationSuccessHandler moAuthenticationSuccessHandler;
 	
 	//AuthenticationFailureHandler 구현체
-	private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;	
+	private final MoAuthenticationFailureHandler moAuthenticationFailureHandler;	
 
 
 	// DB를 이용한 로그인을 위하여 인증 AuthenticationProvider 구현 객체
 	@Bean
 	AuthenticationProvider authenticationProvider() {
-		return new CustomAuthenticationProvider();
+		return new MoAuthenticationProvider();
 	}
 	
 	
@@ -96,14 +98,16 @@ public class SecurityConfig {
         		.usernameParameter("userid")
         		.loginProcessingUrl("/login_proc")
         		.authenticationDetailsSource(formAuthenticationDetailsSource)
-                .successHandler(customAuthenticationSuccessHandler)
-                .failureHandler(customAuthenticationFailureHandler)
+                .successHandler(moAuthenticationSuccessHandler)
+                .failureHandler(moAuthenticationFailureHandler)
                 .permitAll());
         
         /*
-        exceptionHandle
+         exceptionHandle
         */
         http.exceptionHandling(handling -> handling.accessDeniedHandler(accessDeniedHandler()));
+        
+        
         
         return http.build();
 	}
@@ -112,9 +116,9 @@ public class SecurityConfig {
 	@Bean
 	// AccessDeniedHandler 구현체
 	AccessDeniedHandler accessDeniedHandler() {
-		CustomAccessDeniedHandler customAccessDeniedHandler = new CustomAccessDeniedHandler();
-		customAccessDeniedHandler.setErrorPage("/denied");
-		return customAccessDeniedHandler;
+		MoAccessDeniedHandler h = new MoAccessDeniedHandler();
+		h.setErrorPage("/denied");
+		return h;
 	}
 
 	@Bean
@@ -164,5 +168,7 @@ public class SecurityConfig {
 	PasswordEncoder passwordEncoder() {
 		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
 	}
+	
+	
 
 }
