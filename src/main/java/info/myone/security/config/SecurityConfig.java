@@ -34,6 +34,7 @@ public class SecurityConfig {
 	 * 인증시 사용자 추가 파라미터 사용이 필요하다면 AuthenticationDetailsSource 구현 객체를 생성하여 적용
 	 * 인증 성공 후 추가 처리를 정의 하기 위해서는 AuthenticationSuccessHandler 구현 객체를 생성하여 적용
 	 * 인증 실패 후 추가 처리를 정의 하기 위해서는 AuthenticationFailureHandler 구현 객체를 생성하여 적용
+	 * 인증 성겅 후 권한 접근 실패 처리를 정의하기 위해서는 AccessDeniedHandler 구현 객체를 생성하여 적용
 	 */
 	
 
@@ -43,11 +44,8 @@ public class SecurityConfig {
 	// AuthenticationSuccessHandler 구현체
 	private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 	
-	//AuthenticationFailureHandler
-	private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
-	
-//	private final CustomAccessDeniedHandler customAccessDeniedHandler;
-	
+	//AuthenticationFailureHandler 구현체
+	private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;	
 
 
 	// DB를 이용한 로그인을 위하여 인증 AuthenticationProvider 구현 객체
@@ -112,6 +110,7 @@ public class SecurityConfig {
 	// @formatter:on
 	
 	@Bean
+	// AccessDeniedHandler 구현체
 	AccessDeniedHandler accessDeniedHandler() {
 		CustomAccessDeniedHandler customAccessDeniedHandler = new CustomAccessDeniedHandler();
 		customAccessDeniedHandler.setErrorPage("/denied");
