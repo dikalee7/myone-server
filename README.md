@@ -45,4 +45,9 @@
  - 인증실패 : AjaxUrlAuthenticationEntryPoint
  - 접근거부 : AjaxAccessDeniedHandler
 
-> 커스터마이징
+> 커스터마이징  
+ - AjaxAuthenticationFilter  
+ ` - AbstractAuthenticationProcessingFilter 상속`  
+ ` - 필터 작동 조건 : AntPathRequestMatcher("/api/login")로 요청정보와 매칭하고 요청방식이 Ajax 이면 필터 작동`  
+ ` - AjaxAuthenticationToken 생성하여 AuthenticationManager에게 전달하여 인증처리`  
+ ` - 필터 추가`  
