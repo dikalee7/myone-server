@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +23,9 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
 
         if(exception instanceof BadCredentialsException){
             errorMessage = "Invalid Username or Password";
-        }else if(exception instanceof InsufficientAuthenticationException){
+        }else if(exception instanceof UsernameNotFoundException) {
+        	errorMessage = "There is no User";
+        }   else if(exception instanceof InsufficientAuthenticationException){
             errorMessage = "Invalid Secret Key";
         }
 

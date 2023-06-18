@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
+import lombok.Setter;
+
+@Setter
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     private String errorPage;
@@ -17,9 +20,5 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         String deniedUrl = errorPage + "?exception=" + accessDeniedException.getMessage();
         response.sendRedirect(deniedUrl);
-    }
-
-    public void setErrorPage(String errorPage) {
-        this.errorPage = errorPage;
     }
 }
