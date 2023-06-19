@@ -12,7 +12,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import info.myone.security.filter.AjaxLoginProcessingFilter;
-import info.myone.security.provider.MoAuthenticationProvider;
+import info.myone.security.handler.AjaxAccessDeniedHandler;
+import info.myone.security.handler.AjaxAuthenticationFailureHandler;
+import info.myone.security.handler.AjaxAuthenticationSuccessHandler;
+import info.myone.security.provider.AjaxAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -20,38 +23,49 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Order(0)
 public class AjaxSecurityConfig {
+	// AuthenticationSuccessHandler 구현체
+	private final AjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandler;
+
+	// AuthenticationFailureHandler 구현체
+	private final AjaxAuthenticationFailureHandler ajaxAuthenticationFailureHandler;
+	
+	// AjaxAccessDeniedHandler 구현체
+	private final AjaxAccessDeniedHandler ajaxAccessDeniedHandler;
 
 	// @formatter:off
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.antMatcher("/api/**").authorizeHttpRequests(requests -> requests.anyRequest().authenticated());
-        
-        /*
-        filter 추가
-        */
-        http.addFilterBefore(ajaxLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
-       
-        http.csrf().disable();
-       
-		return http.build();
+		// HttpSecurity 인가 API
+			http.antMatcher("/api/**").authorizeHttpRequests(authorizeRequests -> authorizeRequests
+				.anyRequest().authenticated());
+			http.addFilterBefore(ajaxLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
+			
+			/*
+	         exceptionHandle
+	        */
+	        http.exceptionHandling(handling -> handling.accessDeniedHandler(ajaxAccessDeniedHandler));
+	        
+	        http.csrf().disable();
+        return http.build();
 	}
 	// @formatter:on
 
 	@Bean
 	AjaxLoginProcessingFilter ajaxLoginProcessingFilter() {
 		AjaxLoginProcessingFilter ajaxLoginProcessingFilter = new AjaxLoginProcessingFilter();
-		ajaxLoginProcessingFilter.setAuthenticationManager(authenticationManager());
+		ajaxLoginProcessingFilter.setAuthenticationManager(ajaxAuthenticationManager());
+		ajaxLoginProcessingFilter.setAuthenticationSuccessHandler(ajaxAuthenticationSuccessHandler);
+		ajaxLoginProcessingFilter.setAuthenticationFailureHandler(ajaxAuthenticationFailureHandler);
 		return ajaxLoginProcessingFilter;
 	}
 
-	// DB를 이용한 로그인을 위하여 인증 AuthenticationProvider 구현 객체
 	@Bean
-	AuthenticationProvider authenticationProvider() {
-		return new MoAuthenticationProvider();
+	AuthenticationProvider ajaxAuthenticationProvider() {
+		return new AjaxAuthenticationProvider();
 	}
 
-    @Bean
-    AuthenticationManager authenticationManager() {
-		return new ProviderManager(authenticationProvider());
+	@Bean
+	AuthenticationManager ajaxAuthenticationManager() {
+		return new ProviderManager(ajaxAuthenticationProvider());
 	}
 }

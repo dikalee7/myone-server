@@ -1,5 +1,10 @@
 server:
   port: '9080'
+  servlet:
+    encoding:
+      charset: UTF-8
+      force-response: true
+    
 spring:
   devtools:
     restart:
