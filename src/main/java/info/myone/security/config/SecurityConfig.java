@@ -25,6 +25,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Order(1)
 public class SecurityConfig {
+	@Bean
+	PasswordEncoder passwordEncoder() {
+		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+	}
 	
 	/*
 	 * 인증 API – Login Form 인증 과정 UsernamePasswordAuthenticationFilter
@@ -107,7 +111,7 @@ public class SecurityConfig {
         */
         http.exceptionHandling(handling -> handling.accessDeniedHandler(accessDeniedHandler()));
         
-        
+        http.authenticationProvider(authenticationProvider());
         
         return http.build();
 	}
@@ -164,10 +168,7 @@ public class SecurityConfig {
     }*/
 
 
-	@Bean
-	PasswordEncoder passwordEncoder() {
-		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-	}
+	
 	
 	
 

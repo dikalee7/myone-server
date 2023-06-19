@@ -9,12 +9,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 
 import info.myone.security.common.FormWebAuthenticationDetails;
 import info.myone.security.service.AccountContext;
 
-@Component("authenticationProvider")
 public class MoAuthenticationProvider implements AuthenticationProvider {
 
 	@Autowired
@@ -52,7 +50,7 @@ public class MoAuthenticationProvider implements AuthenticationProvider {
 	}
 
 	@Override
-	public boolean supports(Class<?> authentication) {
-		return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
-	}
+    public boolean supports(Class<?> authentication) {
+        return authentication.equals(UsernamePasswordAuthenticationToken.class);
+    }
 }
