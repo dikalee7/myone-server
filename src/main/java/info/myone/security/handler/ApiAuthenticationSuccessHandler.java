@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import info.myone.member.domain.entity.Account;
 
 @Component
-public class AjaxAuthenticationSuccessHandler implements AuthenticationSuccessHandler{
+public class ApiAuthenticationSuccessHandler implements AuthenticationSuccessHandler{
 	
 	private ObjectMapper objectMapper = new ObjectMapper();
 

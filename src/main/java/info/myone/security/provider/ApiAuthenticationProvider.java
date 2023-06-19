@@ -11,9 +11,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import info.myone.security.service.AccountContext;
-import info.myone.security.token.AjaxAuthenticationToken;
+import info.myone.security.token.ApiAuthenticationToken;
 
-public class AjaxAuthenticationProvider implements AuthenticationProvider {
+public class ApiAuthenticationProvider implements AuthenticationProvider {
 	@Autowired
     private UserDetailsService userDetailsService;
 
@@ -32,12 +32,12 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("Invalid password");
         }
 
-        return new AjaxAuthenticationToken(accountContext.getAccount(), null, accountContext.getAuthorities());
+        return new ApiAuthenticationToken(accountContext.getAccount(), null, accountContext.getAuthorities());
 	}
 
 	@Override
 	public boolean supports(Class<?> authentication) {
-		return authentication.equals(AjaxAuthenticationToken.class);
+		return authentication.equals(ApiAuthenticationToken.class);
 	}
 
 	

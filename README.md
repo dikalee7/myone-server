@@ -30,32 +30,31 @@
  `MoAccessDeniedHandler`
 
 
->  Security Ajax 인증 과정  
+>  Security API 인증 과정  
 
-`- Ajax 로그인 요청`  
- - AjaxAuthenticationFilter
- - AjaxAuthenticationToken
- - AuthenticationManager - (위임) -> AjaxAuthenticationProvider(실제 인증 처리) <-> UserDetailsService
- - 인증성공 : AjaxAuthenticationSucessHandler
- - 인증실패 : AjaxAuthenticationFailureHandler
+`- API 로그인 요청`  
+ - ApiAuthenticationFilter
+ - ApiAuthenticationToken
+ - AuthenticationManager - (위임) -> ApiAuthenticationProvider(실제 인증 처리) <-> UserDetailsService
+ - 인증성공 : ApiAuthenticationSucessHandler
+ - 인증실패 : ApiAuthenticationFailureHandler
 
 `- API 접근`  
  - FilterSecurityInterceptor - AuthenticationException or AccessDeniedException 발생 시
  - ExceptionTranslationFilter
- - 인증실패 : AjaxUrlAuthenticationEntryPoint
- - 접근거부 : AjaxAccessDeniedHandler
+ - 인증실패 : ApiUrlAuthenticationEntryPoint
+ - 접근거부 : ApiAccessDeniedHandler
 
 >  커스터마이징  
 
- - 인증 필터 AjaxLoginProcessingFilter  
+ - 인증 필터 ApiLoginProcessingFilter  
  ` - AbstractAuthenticationProcessingFilter 상속`  
- ` - 필터 작동 조건 : AntPathRequestMatcher("/api/login")로 요청정보와 매칭하고 요청방식이 Ajax 이면 필터 작동하도록 구성`  
- ` - AjaxAuthenticationToken 생성하여 AuthenticationManager에게 전달하여 인증처리`  
+ ` - ApiAuthenticationToken 생성하여 AuthenticationManager에게 전달하여 인증처리`  
  
-  - 인증 처리자 AjaxAuthenticationProvider  
+  - 인증 처리자 ApiAuthenticationProvider  
  ` - AuthenticationProvider 구현체`   
  
-  - 인증 핸들러 AjaxAuthenticationSuccessHandler, AjaxAuthenticationFailureHandler  
+  - 인증 핸들러 ApiAuthenticationSuccessHandler, ApiAuthenticationFailureHandler  
  ` - AuthenticationSuccessHandler 구현체`  
  ` - AuthenticationFailureHandler 구현체`   
   

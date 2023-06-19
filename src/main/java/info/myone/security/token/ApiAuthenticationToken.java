@@ -7,7 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.SpringSecurityCoreVersion;
 import org.springframework.util.Assert;
 
-public class AjaxAuthenticationToken extends AbstractAuthenticationToken{
+public class ApiAuthenticationToken extends AbstractAuthenticationToken{
 
 	private static final long serialVersionUID = SpringSecurityCoreVersion.SERIAL_VERSION_UID;
 
@@ -16,7 +16,7 @@ public class AjaxAuthenticationToken extends AbstractAuthenticationToken{
 	private Object credentials;
 
 	//인증 전 인증 요청 정보를 담는 생성자
-	public AjaxAuthenticationToken(Object principal, Object credentials) {
+	public ApiAuthenticationToken(Object principal, Object credentials) {
 		super(null);
 		this.principal = principal;
 		this.credentials = credentials;
@@ -24,7 +24,7 @@ public class AjaxAuthenticationToken extends AbstractAuthenticationToken{
 	}
 
 	//인증 후 인증 정보 및 권한 정보를 담는 생성자
-	public AjaxAuthenticationToken(Object principal, Object credentials,
+	public ApiAuthenticationToken(Object principal, Object credentials,
 			Collection<? extends GrantedAuthority> authorities) {
 		super(authorities);
 		this.principal = principal;
@@ -33,14 +33,14 @@ public class AjaxAuthenticationToken extends AbstractAuthenticationToken{
 	}
 
 
-	public static AjaxAuthenticationToken unauthenticated(Object principal, Object credentials) {
-		return new AjaxAuthenticationToken(principal, credentials);
+	public static ApiAuthenticationToken unauthenticated(Object principal, Object credentials) {
+		return new ApiAuthenticationToken(principal, credentials);
 	}
 
 
-	public static AjaxAuthenticationToken authenticated(Object principal, Object credentials,
+	public static ApiAuthenticationToken authenticated(Object principal, Object credentials,
 			Collection<? extends GrantedAuthority> authorities) {
-		return new AjaxAuthenticationToken(principal, credentials, authorities);
+		return new ApiAuthenticationToken(principal, credentials, authorities);
 	}
 
 	@Override

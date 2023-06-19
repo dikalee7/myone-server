@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
-public class AjaxAuthenticationFailureHandler implements AuthenticationFailureHandler{
+public class ApiAuthenticationFailureHandler implements AuthenticationFailureHandler{
 	private ObjectMapper objectMapper = new ObjectMapper();
 
 	@Override

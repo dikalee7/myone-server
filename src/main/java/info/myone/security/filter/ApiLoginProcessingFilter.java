@@ -15,13 +15,13 @@ import org.thymeleaf.util.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import info.myone.member.domain.dto.AccountDto;
-import info.myone.security.token.AjaxAuthenticationToken;
+import info.myone.security.token.ApiAuthenticationToken;
 
-public class AjaxLoginProcessingFilter extends AbstractAuthenticationProcessingFilter {
+public class ApiLoginProcessingFilter extends AbstractAuthenticationProcessingFilter {
 
 	private ObjectMapper objectMapper = new ObjectMapper();
 
-	public AjaxLoginProcessingFilter() {
+	public ApiLoginProcessingFilter() {
 		super(new AntPathRequestMatcher("/api/login"));
 	}
 
@@ -38,7 +38,7 @@ public class AjaxLoginProcessingFilter extends AbstractAuthenticationProcessingF
 			throw new IllegalArgumentException("Username or Passoword is empty");
 		}
 
-		AjaxAuthenticationToken ajaxAuthenticationToken = new AjaxAuthenticationToken(accountDto.getUserid(),
+		ApiAuthenticationToken ajaxAuthenticationToken = new ApiAuthenticationToken(accountDto.getUserid(),
 				accountDto.getPassword());
 
 		return getAuthenticationManager().authenticate(ajaxAuthenticationToken);
