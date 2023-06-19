@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import info.myone.security.common.ApiLoginAuthenticationEntryPoint;
 import info.myone.security.filter.ApiLoginProcessingFilter;
 import info.myone.security.handler.ApiAccessDeniedHandler;
 import info.myone.security.handler.ApiAuthenticationFailureHandler;
@@ -37,13 +38,16 @@ public class ApiSecurityConfig {
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		// HttpSecurity 인가 API
 			http.antMatcher("/api/**").authorizeHttpRequests(authorizeRequests -> authorizeRequests
+				.antMatchers("/api/messages").hasRole("MANAGER")
 				.anyRequest().authenticated());
-			http.addFilterBefore(ApiLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
+			http.addFilterBefore(apiLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
 			
 			/*
 	         exceptionHandle
 	        */
-	        http.exceptionHandling(handling -> handling.accessDeniedHandler(apiAccessDeniedHandler));
+	        http.exceptionHandling(handling -> handling
+	        		.authenticationEntryPoint(new ApiLoginAuthenticationEntryPoint())
+	        		.accessDeniedHandler(apiAccessDeniedHandler));
 	        
 	        http.csrf().disable();
 	        
@@ -52,7 +56,7 @@ public class ApiSecurityConfig {
 	// @formatter:on
 
 	@Bean
-	ApiLoginProcessingFilter ApiLoginProcessingFilter() {
+	ApiLoginProcessingFilter apiLoginProcessingFilter() {
 		ApiLoginProcessingFilter ApiLoginProcessingFilter = new ApiLoginProcessingFilter();
 		ApiLoginProcessingFilter.setAuthenticationManager(apiAuthenticationManager());
 		ApiLoginProcessingFilter.setAuthenticationSuccessHandler(apiAuthenticationSuccessHandler);

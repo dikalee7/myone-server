@@ -42,8 +42,8 @@
 `- API 접근`  
  - FilterSecurityInterceptor - AuthenticationException or AccessDeniedException 발생 시
  - ExceptionTranslationFilter
- - 인증실패 : ApiUrlAuthenticationEntryPoint
- - 접근거부 : ApiAccessDeniedHandler
+ - 인증없이 접근 : AuthenticationEntryPoint
+ - 인증은 하였으나 권한 없음 : ApiAccessDeniedHandler
 
 >  커스터마이징  
 
@@ -51,12 +51,17 @@
  ` - AbstractAuthenticationProcessingFilter 상속`  
  ` - ApiAuthenticationToken 생성하여 AuthenticationManager에게 전달하여 인증처리`  
  
-  - 인증 처리자 ApiAuthenticationProvider  
+ - 인증 처리자 ApiAuthenticationProvider  
  ` - AuthenticationProvider 구현체`   
  
-  - 인증 핸들러 ApiAuthenticationSuccessHandler, ApiAuthenticationFailureHandler  
+ - 인증 핸들러 ApiAuthenticationSuccessHandler, ApiAuthenticationFailureHandler  
  ` - AuthenticationSuccessHandler 구현체`  
- ` - AuthenticationFailureHandler 구현체`   
+ ` - AuthenticationFailureHandler 구현체`  
+
+ - SC_UNAUTHORIZED ApiLoginAuthenticationEntryPoint  
+ ` - AuthenticationEntryPoint 구현체`   
   
+ - SC_FORBIDDEN ApiAccessDeniedHandler  
+ ` - AccessDeniedHandler 구현체`   
  
 
