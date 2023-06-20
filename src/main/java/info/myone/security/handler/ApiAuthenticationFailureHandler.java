@@ -13,9 +13,11 @@ import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@Component
 public class ApiAuthenticationFailureHandler implements AuthenticationFailureHandler{
 	private ObjectMapper objectMapper = new ObjectMapper();
 

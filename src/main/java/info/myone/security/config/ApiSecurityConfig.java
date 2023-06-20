@@ -9,9 +9,7 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import info.myone.security.common.ApiLoginAuthenticationEntryPoint;
 import info.myone.security.handler.ApiAccessDeniedHandler;
@@ -37,22 +35,13 @@ public class ApiSecurityConfig {
 	}
 	
     // AuthenticationSuccessHandler 구현 객체
-    @Bean
-    AuthenticationSuccessHandler apiAuthenticationSuccessHandler() {
-	    return new ApiAuthenticationSuccessHandler() ;
-	}
+	private final ApiAuthenticationSuccessHandler apiAuthenticationSuccessHandler;
 
     //AuthenticationFailureHandler 구현 객체
-    @Bean
-    AuthenticationFailureHandler apiAuthenticationFailureHandler() {
-	    return new ApiAuthenticationFailureHandler() ;
-	}
+    private final ApiAuthenticationFailureHandler apiAuthenticationFailureHandler;
 	
 	// AccessDeniedHandler 구현 객체
-    @Bean
-    AccessDeniedHandler apiAccessDeniedHandler() {
-	    return new ApiAccessDeniedHandler() ;
-	}
+    private final ApiAccessDeniedHandler apiAccessDeniedHandler;
 
 
 	// @formatter:off
@@ -71,9 +60,9 @@ public class ApiSecurityConfig {
         */
         http.exceptionHandling(handling -> handling
         		.authenticationEntryPoint(new ApiLoginAuthenticationEntryPoint())
-        		.accessDeniedHandler(apiAccessDeniedHandler()));
+        		.accessDeniedHandler(apiAccessDeniedHandler));
         
-        http.csrf().disable();
+//        http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
         
         customConfigureApi(http);
 
@@ -87,8 +76,8 @@ public class ApiSecurityConfig {
 	private void customConfigureApi(HttpSecurity http) throws Exception {
         http
                 .apply(new ApiLoginConfigurer<>())
-                .successHandlerApi(apiAuthenticationSuccessHandler())
-                .failureHandlerApi(apiAuthenticationFailureHandler())
+                .successHandlerApi(apiAuthenticationSuccessHandler)
+                .failureHandlerApi(apiAuthenticationFailureHandler)
                 .setAuthenticationManager(apiAuthenticationManager())
                 .loginProcessingUrl("/api/login");
     }

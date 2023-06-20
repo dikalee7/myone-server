@@ -1,12 +1,9 @@
 package info.myone.security.config;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -55,22 +52,13 @@ public class SecurityConfig {
 	}
 
     // AuthenticationDetailsSource 구현 객체
-    @Bean
-    AuthenticationDetailsSource<HttpServletRequest, ?> formAuthenticationDetailsSource() {
-	    return new FormAuthenticationDetailsSource() ;
-	}
+	private final FormAuthenticationDetailsSource formAuthenticationDetailsSource;
 
     // AuthenticationSuccessHandler 구현 객체
-    @Bean
-    AuthenticationSuccessHandler moAuthenticationSuccessHandler() {
-	    return new MoAuthenticationSuccessHandler() ;
-	}
+    private final MoAuthenticationSuccessHandler moAuthenticationSuccessHandler;
 
     //AuthenticationFailureHandler 구현 객체
-    @Bean
-    AuthenticationFailureHandler moAuthenticationFailureHandler() {
-	    return new MoAuthenticationFailureHandler() ;
-	}
+    private final MoAuthenticationFailureHandler moAuthenticationFailureHandler;
 
 	// @formatter:off
 	/*
@@ -91,11 +79,11 @@ public class SecurityConfig {
 	SecurityFilterChain filterChan(HttpSecurity http) throws Exception {
 		// HttpSecurity 인가 API
 		http.authorizeHttpRequests(authorizeRequests -> authorizeRequests
-				.antMatchers("/","/users","user/login/**","/login*").permitAll()
 				.antMatchers("/mypage").hasRole("USER")
-				.antMatchers("/messages").hasRole("MANAGER")
-				.antMatchers("/config").hasRole("ADMIN")
-				.anyRequest().authenticated());
+                .antMatchers("/messages").hasRole("MANAGER")
+                .antMatchers("/config").hasRole("ADMIN")
+                .antMatchers("/**").permitAll()
+                .anyRequest().authenticated());
 		
 		/*
 		 http.formLogin()
@@ -111,16 +99,16 @@ public class SecurityConfig {
         http.formLogin(login -> login
         		.loginPage("/login")
         		.usernameParameter("userid")
-        		.loginProcessingUrl("/login_proc")
-        		.authenticationDetailsSource(formAuthenticationDetailsSource())
-                .successHandler(moAuthenticationSuccessHandler())
-                .failureHandler(moAuthenticationFailureHandler())
+                .loginProcessingUrl("/login_proc")
+                .authenticationDetailsSource(formAuthenticationDetailsSource)
+                .successHandler(moAuthenticationSuccessHandler)
+                .failureHandler(moAuthenticationFailureHandler)
                 .permitAll());
         
         /*
          exceptionHandle
         */
-        http.exceptionHandling(handling -> handling.accessDeniedHandler(accessDeniedHandler()));
+        http.exceptionHandling(handling -> handling.accessDeniedHandler(moAccessDeniedHandler()));
         
         http.authenticationProvider(moAuthenticationProvider());
         
@@ -130,7 +118,7 @@ public class SecurityConfig {
 	
 	@Bean
 	// AccessDeniedHandler 구현체
-	AccessDeniedHandler accessDeniedHandler() {
+	AccessDeniedHandler moAccessDeniedHandler() {
 		MoAccessDeniedHandler h = new MoAccessDeniedHandler();
 		h.setErrorPage("/denied");
 		return h;
