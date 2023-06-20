@@ -9,10 +9,11 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import info.myone.security.common.ApiLoginAuthenticationEntryPoint;
-import info.myone.security.filter.ApiLoginProcessingFilter;
 import info.myone.security.handler.ApiAccessDeniedHandler;
 import info.myone.security.handler.ApiAuthenticationFailureHandler;
 import info.myone.security.handler.ApiAuthenticationSuccessHandler;
@@ -24,46 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Order(0)
 public class ApiSecurityConfig {
-	// AuthenticationSuccessHandler 구현체
-	private final ApiAuthenticationSuccessHandler apiAuthenticationSuccessHandler;
-
-	// AuthenticationFailureHandler 구현체
-	private final ApiAuthenticationFailureHandler apiAuthenticationFailureHandler;
 	
-	// ApiAccessDeniedHandler 구현체
-	private final ApiAccessDeniedHandler apiAccessDeniedHandler;
-
-	// @formatter:off
-	@Bean
-	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		// HttpSecurity 인가 API
-			http.antMatcher("/api/**").authorizeHttpRequests(authorizeRequests -> authorizeRequests
-				.antMatchers("/api/messages").hasRole("MANAGER")
-				.anyRequest().authenticated());
-			http.addFilterBefore(apiLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
-			
-			/*
-	         exceptionHandle
-	        */
-	        http.exceptionHandling(handling -> handling
-	        		.authenticationEntryPoint(new ApiLoginAuthenticationEntryPoint())
-	        		.accessDeniedHandler(apiAccessDeniedHandler));
-	        
-	        http.csrf().disable();
-	        
-        return http.build();
-	}
-	// @formatter:on
-
-	@Bean
-	ApiLoginProcessingFilter apiLoginProcessingFilter() {
-		ApiLoginProcessingFilter ApiLoginProcessingFilter = new ApiLoginProcessingFilter();
-		ApiLoginProcessingFilter.setAuthenticationManager(apiAuthenticationManager());
-		ApiLoginProcessingFilter.setAuthenticationSuccessHandler(apiAuthenticationSuccessHandler);
-		ApiLoginProcessingFilter.setAuthenticationFailureHandler(apiAuthenticationFailureHandler);
-		return ApiLoginProcessingFilter;
-	}
-
 	@Bean
 	AuthenticationProvider apiAuthenticationProvider() {
 		return new ApiAuthenticationProvider();
@@ -73,4 +35,69 @@ public class ApiSecurityConfig {
 	AuthenticationManager apiAuthenticationManager() {
 		return new ProviderManager(apiAuthenticationProvider());
 	}
+	
+    // AuthenticationSuccessHandler 구현 객체
+    @Bean
+    AuthenticationSuccessHandler apiAuthenticationSuccessHandler() {
+	    return new ApiAuthenticationSuccessHandler() ;
+	}
+
+    //AuthenticationFailureHandler 구현 객체
+    @Bean
+    AuthenticationFailureHandler apiAuthenticationFailureHandler() {
+	    return new ApiAuthenticationFailureHandler() ;
+	}
+	
+	// AccessDeniedHandler 구현 객체
+    @Bean
+    AccessDeniedHandler apiAccessDeniedHandler() {
+	    return new ApiAccessDeniedHandler() ;
+	}
+
+
+	// @formatter:off
+	@Bean
+	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		// HttpSecurity 인가 API
+		http.antMatcher("/api/**").authorizeHttpRequests(authorizeRequests -> authorizeRequests
+			.antMatchers("/api/messages").hasRole("MANAGER")
+            .antMatchers("/api/login").permitAll()
+			.anyRequest().authenticated());
+		
+		// http.addFilterBefore(apiLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
+		
+		/*
+         exceptionHandle
+        */
+        http.exceptionHandling(handling -> handling
+        		.authenticationEntryPoint(new ApiLoginAuthenticationEntryPoint())
+        		.accessDeniedHandler(apiAccessDeniedHandler()));
+        
+        http.csrf().disable();
+        
+        customConfigureApi(http);
+	        
+        return http.build();
+	}
+	// @formatter:on
+
+	private void customConfigureApi(HttpSecurity http) throws Exception {
+        http
+                .apply(new ApiLoginConfigurer<>())
+                .successHandlerApi(apiAuthenticationSuccessHandler())
+                .failureHandlerApi(apiAuthenticationFailureHandler())
+                .setAuthenticationManager(apiAuthenticationManager())
+                .loginProcessingUrl("/api/login");
+    }
+
+//	@Bean
+//	ApiLoginProcessingFilter apiLoginProcessingFilter() {
+//		ApiLoginProcessingFilter ApiLoginProcessingFilter = new ApiLoginProcessingFilter();
+//		ApiLoginProcessingFilter.setAuthenticationManager(apiAuthenticationManager());
+//		ApiLoginProcessingFilter.setAuthenticationSuccessHandler(apiAuthenticationSuccessHandler);
+//		ApiLoginProcessingFilter.setAuthenticationFailureHandler(apiAuthenticationFailureHandler);
+//		return ApiLoginProcessingFilter;
+//	}
+
+
 }

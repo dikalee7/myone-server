@@ -1,9 +1,12 @@
 package info.myone.security.config;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,6 +15,8 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import info.myone.security.common.FormAuthenticationDetailsSource;
 import info.myone.security.handler.MoAccessDeniedHandler;
@@ -19,6 +24,19 @@ import info.myone.security.handler.MoAuthenticationFailureHandler;
 import info.myone.security.handler.MoAuthenticationSuccessHandler;
 import info.myone.security.provider.MoAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
+
+/*
+ * 인증 API – Login Form 인증 과정 UsernamePasswordAuthenticationFilter
+ * AntPathRequestMatcher(/login) Authentication(Username + Password)
+ * AuthenticationManager -(위임)-> AuthenticationProvider(실제 인증 처리)
+ * Authentication(User+ Authorities) SecurityContext에 저장 
+ * 
+ * DB 인증 구현 시 실제 인증 처리하는 AuthenticationProvider 구현 객체를 생성하여 적용
+ * 인증시 사용자 추가 파라미터 사용이 필요하다면 AuthenticationDetailsSource 구현 객체를 생성하여 적용
+ * 인증 성공 후 추가 처리를 정의 하기 위해서는 AuthenticationSuccessHandler 구현 객체를 생성하여 적용
+ * 인증 실패 후 추가 처리를 정의 하기 위해서는 AuthenticationFailureHandler 구현 객체를 생성하여 적용
+ * 인증 성공 후 권한 접근 실패 처리를 정의하기 위해서는 AccessDeniedHandler 구현 객체를 생성하여 적용
+ */
 
 @Configuration
 @EnableWebSecurity
@@ -29,38 +47,31 @@ public class SecurityConfig {
 	PasswordEncoder passwordEncoder() {
 		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
 	}
-	
-	/*
-	 * 인증 API – Login Form 인증 과정 UsernamePasswordAuthenticationFilter
-	 * AntPathRequestMatcher(/login) Authentication(Username + Password)
-	 * AuthenticationManager -(위임)-> AuthenticationProvider(실제 인증 처리)
-	 * Authentication(User+ Authorities) SecurityContext에 저장 SuccessHandler
-	 * 
-	 * DB 인증 구현 시 실제 인증 처리하는 AuthenticationProvider 구현 객체를 생성하여 적용
-	 * 인증시 사용자 추가 파라미터 사용이 필요하다면 AuthenticationDetailsSource 구현 객체를 생성하여 적용
-	 * 인증 성공 후 추가 처리를 정의 하기 위해서는 AuthenticationSuccessHandler 구현 객체를 생성하여 적용
-	 * 인증 실패 후 추가 처리를 정의 하기 위해서는 AuthenticationFailureHandler 구현 객체를 생성하여 적용
-	 * 인증 성겅 후 권한 접근 실패 처리를 정의하기 위해서는 AccessDeniedHandler 구현 객체를 생성하여 적용
-	 */
-	
-
-	// AuthenticationDetailsSource 구현체
-	private final FormAuthenticationDetailsSource formAuthenticationDetailsSource;
-	
-	// AuthenticationSuccessHandler 구현체
-	private final MoAuthenticationSuccessHandler moAuthenticationSuccessHandler;
-	
-	//AuthenticationFailureHandler 구현체
-	private final MoAuthenticationFailureHandler moAuthenticationFailureHandler;	
-
 
 	// DB를 이용한 로그인을 위하여 인증 AuthenticationProvider 구현 객체
 	@Bean
-	AuthenticationProvider authenticationProvider() {
+	AuthenticationProvider moAuthenticationProvider() {
 		return new MoAuthenticationProvider();
 	}
-	
-	
+
+    // AuthenticationDetailsSource 구현 객체
+    @Bean
+    AuthenticationDetailsSource<HttpServletRequest, ?> formAuthenticationDetailsSource() {
+	    return new FormAuthenticationDetailsSource() ;
+	}
+
+    // AuthenticationSuccessHandler 구현 객체
+    @Bean
+    AuthenticationSuccessHandler moAuthenticationSuccessHandler() {
+	    return new MoAuthenticationSuccessHandler() ;
+	}
+
+    //AuthenticationFailureHandler 구현 객체
+    @Bean
+    AuthenticationFailureHandler moAuthenticationFailureHandler() {
+	    return new MoAuthenticationFailureHandler() ;
+	}
+
 	// @formatter:off
 	/*
 	 * 인증 API
@@ -101,9 +112,9 @@ public class SecurityConfig {
         		.loginPage("/login")
         		.usernameParameter("userid")
         		.loginProcessingUrl("/login_proc")
-        		.authenticationDetailsSource(formAuthenticationDetailsSource)
-                .successHandler(moAuthenticationSuccessHandler)
-                .failureHandler(moAuthenticationFailureHandler)
+        		.authenticationDetailsSource(formAuthenticationDetailsSource())
+                .successHandler(moAuthenticationSuccessHandler())
+                .failureHandler(moAuthenticationFailureHandler())
                 .permitAll());
         
         /*
@@ -111,7 +122,7 @@ public class SecurityConfig {
         */
         http.exceptionHandling(handling -> handling.accessDeniedHandler(accessDeniedHandler()));
         
-        http.authenticationProvider(authenticationProvider());
+        http.authenticationProvider(moAuthenticationProvider());
         
         return http.build();
 	}

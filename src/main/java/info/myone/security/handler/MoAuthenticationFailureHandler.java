@@ -11,9 +11,7 @@ import org.springframework.security.authentication.InsufficientAuthenticationExc
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-import org.springframework.stereotype.Component;
 
-@Component
 public class MoAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
     @Override
