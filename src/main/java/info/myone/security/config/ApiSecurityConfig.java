@@ -76,10 +76,13 @@ public class ApiSecurityConfig {
         http.csrf().disable();
         
         customConfigureApi(http);
+
 	        
         return http.build();
 	}
 	// @formatter:on
+
+
 
 	private void customConfigureApi(HttpSecurity http) throws Exception {
         http
