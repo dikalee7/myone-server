@@ -9,10 +9,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.Builder;
 import lombok.Data;
 @Table(name = "tb_account_role")
 @Entity
 @Data
+@Builder
 public class AccountRole {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
