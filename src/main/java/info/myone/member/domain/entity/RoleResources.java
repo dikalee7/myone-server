@@ -9,11 +9,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Table(name = "tb_role_resources")
 @Entity
 @Data
+@Builder
 public class RoleResources {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

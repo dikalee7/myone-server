@@ -3,12 +3,14 @@ package info.myone.member.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import info.myone.member.domain.entity.Role;
 import info.myone.member.repository.RoleRepository;
 import info.myone.member.service.RoleService;
 
+@Service
 public class RoleServiceImpl implements RoleService {
 	@Autowired
     private RoleRepository roleRepository;
