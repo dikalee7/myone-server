@@ -1,24 +1,34 @@
 package info.myone.member.domain.entity;
 
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@Table(name = "tb_member")
 @Entity
 @Data
-//@EqualsAndHashCode(of = "id")
+@ToString(exclude = {"userRoles"})
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "tb_member")
-public class Account {
+public class Account implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
-//    @GeneratedValue
     private String userid;
 
     @Column
@@ -35,4 +45,7 @@ public class Account {
 
     @Column
     private String role;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    private Set<AccountRole> userRoles = new HashSet<>();
 }

@@ -20,7 +20,7 @@ spring:
       maximum-pool-size: '4'
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
       hibernate:
