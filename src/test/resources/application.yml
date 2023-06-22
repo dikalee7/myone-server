@@ -1,3 +1,43 @@
+server:
+  port: '9080'
+  servlet:
+    encoding:
+      charset: UTF-8
+      force-response: true
+    
+spring:
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/myone
+    username: dikalee
+    password: d09209233!
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: '4'
+  jpa:
+    hibernate:
+      ddl-auto: create
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        '[show_sql]': true
+        '[format_sql]': true
+        jdbc:
+          lob:
+            '[non_contextual_creation]': true
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    cache: false
+#  main:
+#    allow-bean-definition-overriding: true
+  output:
+    ansi:
+      enabled: always
 logging.level:
   root: info
   '[info.myone]': debug
